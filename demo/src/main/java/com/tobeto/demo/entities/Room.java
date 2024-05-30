@@ -33,6 +33,8 @@ public class Room {
     private List<Reservation> reservations;
 
     private int capacity;
+
     private double price;
+
     private Boolean available;
 }

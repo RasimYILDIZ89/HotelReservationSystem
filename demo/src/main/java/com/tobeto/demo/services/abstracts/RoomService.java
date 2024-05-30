@@ -1,14 +1,15 @@
 package com.tobeto.demo.services.abstracts;
 
 import com.tobeto.demo.entities.Room;
+import com.tobeto.demo.entities.RoomType;
 import com.tobeto.demo.services.dtos.requests.room.AddRoomRequest;
 import com.tobeto.demo.services.dtos.requests.room.UpdateRoomRequest;
-import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
 import com.tobeto.demo.services.dtos.responses.room.AddRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.DeleteRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.ListRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.UpdateRoomResponse;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RoomService {
@@ -21,4 +22,7 @@ public interface RoomService {
     DeleteRoomResponse delete (int id);
 
     UpdateRoomResponse update(UpdateRoomRequest request);
+
+    List<ListRoomResponse> findAvailableRooms(Date startDate, Date endDate, RoomType roomType);
+
 }

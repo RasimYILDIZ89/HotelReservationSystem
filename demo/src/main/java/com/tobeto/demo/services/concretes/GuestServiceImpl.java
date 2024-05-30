@@ -9,8 +9,10 @@ import com.tobeto.demo.services.dtos.responses.guest.AddGuestResponse;
 import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
 import com.tobeto.demo.services.dtos.responses.guest.ListGuestResponse;
 import com.tobeto.demo.services.dtos.responses.guest.UpdateGuestResponse;
+import com.tobeto.demo.services.mappers.GuestMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,26 +26,48 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public List<ListGuestResponse> getAll() {
-        return null;
+
+        List<Guest> guestList = guestRepository.findAll();
+        List<ListGuestResponse> result = new ArrayList<>();
+
+        for (Guest guest : guestList) {
+
+            ListGuestResponse dto = GuestMapper.INSTANCE.ListGuestResponseToGuest(guest);
+            result.add(dto);
+        }
+        return result;
     }
 
     @Override
     public Guest getById(int id) {
-        return null;
+        return guestRepository.findById(id).orElseThrow();
     }
 
     @Override
     public AddGuestResponse add(AddGuestRequest request) {
-        return null;
+        Guest guest = GuestMapper.INSTANCE.guestToAddGuestRequest(request);
+
+        Guest Saved = guestRepository.save(guest);
+
+        AddGuestResponse response = GuestMapper.INSTANCE.addGuestResponseToGuest(Saved);
+        return response;
     }
 
     @Override
     public DeleteGuestResponse delete(int id) {
-return null;
+
+        Guest findById = guestRepository.findById(id).orElseThrow();
+        guestRepository.delete(findById);
+        DeleteGuestResponse response = GuestMapper.INSTANCE.deleteGuestResponseToGuest(findById);
+        return response;
     }
 
     @Override
     public UpdateGuestResponse update(UpdateGuestRequest request) {
-        return null;
+
+        Guest guest = GuestMapper.INSTANCE.guestToUpdateGuestRequest(request);
+        Guest Updated = guestRepository.save(guest);
+        UpdateGuestResponse response = GuestMapper.INSTANCE.updateGuestResponseToGuest(Updated);
+        return response;
     }
 }
