@@ -23,5 +23,7 @@ public interface GuestService {
 
     UpdateGuestResponse update(UpdateGuestRequest request);
 
+    Guest mapGuestIdToGuest(int guestId);
+
 
 }

@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -51,11 +52,16 @@ public class RoomsController {
        return roomService.delete(id);
     }
 
-    @GetMapping("/findAvailableRooms")
+    @GetMapping("/findAvailable")
     public List<ListRoomResponse> findAvailableRooms(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
-            @RequestParam RoomType roomType) {
-        return roomService.findAvailableRooms(startDate, endDate, roomType);
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam int roomTypeId
+    ) {
+        return roomService.findAvailableRooms(startDate, endDate, roomTypeId);
     }
+
+
+
+
 }

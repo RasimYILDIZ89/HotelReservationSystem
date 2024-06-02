@@ -1,18 +1,23 @@
 package com.tobeto.demo.services.concretes;
 
+import com.tobeto.demo.entities.Guest;
 import com.tobeto.demo.entities.Reservation;
+import com.tobeto.demo.entities.Room;
 import com.tobeto.demo.repositories.ReservationRepository;
+import com.tobeto.demo.services.abstracts.GuestService;
 import com.tobeto.demo.services.abstracts.ReservationService;
+import com.tobeto.demo.services.abstracts.RoomService;
 import com.tobeto.demo.services.dtos.requests.reservation.AddReservationRequest;
 import com.tobeto.demo.services.dtos.requests.reservation.UpdateReservationRequest;
-import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.AddReservationResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.DeleteReservationResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.ListReservationResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.UpdateReservationResponse;
 import com.tobeto.demo.services.mappers.ReservationMapper;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +26,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     private ReservationRepository reservationRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository) {
+    private RoomService roomService;
+
+    private GuestService guestService;
+
+    public ReservationServiceImpl(ReservationRepository reservationRepository,@Lazy RoomService roomService,GuestService guestService) {
+        this.roomService = roomService;
+        this.guestService = guestService;
         this.reservationRepository = reservationRepository;
     }
 
@@ -43,10 +54,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public AddReservationResponse add(AddReservationRequest request) {
+        Room room = roomService.getById(request.getRoomId());
+        Guest guest = guestService.getById(request.getGuestId());
+
         Reservation reservation = ReservationMapper.INSTANCE.reservationToAddReservationRequest(request);
 
-        Reservation Saved = reservationRepository.save(reservation);
-        AddReservationResponse response = ReservationMapper.INSTANCE.addReservationResponseToReservation(Saved);
+        reservation.setRoom(room);
+        reservation.setGuest(guest);
+
+        reservation = reservationRepository.save(reservation);
+        AddReservationResponse response = ReservationMapper.INSTANCE.addReservationResponseToReservation(reservation);
         return response;
     }
 
@@ -65,4 +82,8 @@ public class ReservationServiceImpl implements ReservationService {
         UpdateReservationResponse response = ReservationMapper.INSTANCE.updateReservationResponseToReservation(Updated);
         return response;
     }
+
+
+
 }
+

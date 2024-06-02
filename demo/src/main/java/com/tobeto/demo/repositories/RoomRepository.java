@@ -6,16 +6,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Integer> {
+    @Query("SELECT r FROM Room r WHERE r.available = true AND r.type.id = :roomTypeId " +
+            "AND NOT EXISTS (SELECT rv FROM Reservation rv WHERE rv.room = r AND (:startDate BETWEEN rv.checkInDate AND rv.checkOutDate) " +
+            "OR (:endDate BETWEEN rv.checkInDate AND rv.checkOutDate))")
+    List<Room> findAvailableRooms(@Param("startDate") LocalDate startDate,
+                                  @Param("endDate") LocalDate endDate,
+                                  @Param("roomTypeId") int roomTypeId);
 
-    @Query("SELECT r FROM Room r LEFT JOIN r.reservations res " +
-            "WHERE r.type = :roomType " +
-            "AND r.available = true " +
-            "AND (res.checkOutDate  > :startDate OR res.checkInDate < :endDate)")
-    List<Room> findAvailableRooms(@Param("startDate") Date startDate,
-                                  @Param("endDate") Date endDate,
-                                  @Param("roomType") RoomType roomType);
+
+
+
 }

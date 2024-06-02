@@ -10,6 +10,7 @@ import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
 import com.tobeto.demo.services.dtos.responses.guest.ListGuestResponse;
 import com.tobeto.demo.services.dtos.responses.guest.UpdateGuestResponse;
 import com.tobeto.demo.services.mappers.GuestMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,5 +70,10 @@ public class GuestServiceImpl implements GuestService {
         Guest Updated = guestRepository.save(guest);
         UpdateGuestResponse response = GuestMapper.INSTANCE.updateGuestResponseToGuest(Updated);
         return response;
+    }
+
+    public Guest mapGuestIdToGuest(int guestId) {
+        return guestRepository.findById(guestId)
+                .orElseThrow(() -> new EntityNotFoundException("Guest not found with id: " + guestId));
     }
 }

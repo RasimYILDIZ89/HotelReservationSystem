@@ -20,10 +20,6 @@ public class UpdateRoomRequest {
 
     private String roomNumber;
 
-    private RoomType type;
-
-    private Hotel hotel;
-
     private int capacity;
 
     private double price;

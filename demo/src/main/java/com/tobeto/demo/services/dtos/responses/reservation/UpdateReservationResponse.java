@@ -17,9 +17,9 @@ public class UpdateReservationResponse {
 
     private int id;
 
-    private Guest guest;
+    private int guestId;
 
-    private Room room;
+    private int roomId;
 
     private LocalDate checkInDate;
 

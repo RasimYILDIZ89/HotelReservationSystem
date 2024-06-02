@@ -11,6 +11,8 @@ import com.tobeto.demo.services.dtos.responses.room.UpdateRoomResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper
 public interface RoomMapper {
 
@@ -27,4 +29,6 @@ public interface RoomMapper {
     DeleteRoomResponse deleteRoomResponseToRoom(Room room);
 
     ListRoomResponse ListRoomResponseToRoom(Room room);
+
+    List<ListRoomResponse> roomsToListRoomResponses(List<Room> rooms);
 }

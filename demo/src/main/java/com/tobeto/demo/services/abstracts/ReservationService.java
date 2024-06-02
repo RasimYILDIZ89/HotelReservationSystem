@@ -1,6 +1,8 @@
 package com.tobeto.demo.services.abstracts;
 
+import com.tobeto.demo.entities.Guest;
 import com.tobeto.demo.entities.Reservation;
+import com.tobeto.demo.entities.Room;
 import com.tobeto.demo.services.dtos.requests.reservation.AddReservationRequest;
 import com.tobeto.demo.services.dtos.requests.reservation.UpdateReservationRequest;
 import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
@@ -9,6 +11,7 @@ import com.tobeto.demo.services.dtos.responses.reservation.DeleteReservationResp
 import com.tobeto.demo.services.dtos.responses.reservation.ListReservationResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.UpdateReservationResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
@@ -21,4 +24,7 @@ public interface ReservationService {
     DeleteReservationResponse delete (int id);
 
     UpdateReservationResponse update(UpdateReservationRequest request);
+
+
+
 }

@@ -9,6 +9,7 @@ import com.tobeto.demo.services.dtos.responses.room.DeleteRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.ListRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.UpdateRoomResponse;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,9 @@ public interface RoomService {
 
     UpdateRoomResponse update(UpdateRoomRequest request);
 
-    List<ListRoomResponse> findAvailableRooms(Date startDate, Date endDate, RoomType roomType);
-
+    List<ListRoomResponse> findAvailableRooms(LocalDate startDate, LocalDate endDate, int roomTypeId);
 }
+
+
+
+

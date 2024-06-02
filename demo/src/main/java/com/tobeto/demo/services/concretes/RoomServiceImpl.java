@@ -1,20 +1,25 @@
 package com.tobeto.demo.services.concretes;
 
+import com.tobeto.demo.entities.Hotel;
+import com.tobeto.demo.entities.Reservation;
 import com.tobeto.demo.entities.Room;
 import com.tobeto.demo.entities.RoomType;
 import com.tobeto.demo.repositories.RoomRepository;
+import com.tobeto.demo.services.abstracts.HotelService;
+import com.tobeto.demo.services.abstracts.ReservationService;
 import com.tobeto.demo.services.abstracts.RoomService;
+import com.tobeto.demo.services.abstracts.RoomTypeService;
 import com.tobeto.demo.services.dtos.requests.room.AddRoomRequest;
 import com.tobeto.demo.services.dtos.requests.room.UpdateRoomRequest;
-import com.tobeto.demo.services.dtos.responses.guest.DeleteGuestResponse;
 import com.tobeto.demo.services.dtos.responses.room.AddRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.DeleteRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.UpdateRoomResponse;
 import com.tobeto.demo.services.dtos.responses.room.ListRoomResponse;
 import com.tobeto.demo.services.mappers.RoomMapper;
-import jakarta.persistence.TypedQuery;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,10 +27,16 @@ import java.util.List;
 @Service
 public class RoomServiceImpl implements RoomService {
 
-    private RoomRepository roomRepository;
+    private final RoomRepository roomRepository;
+    private final RoomTypeService roomTypeService;
+    private final HotelService hotelService;
+    private final ReservationService reservationService;
 
-    public RoomServiceImpl(RoomRepository roomRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository, RoomTypeService roomTypeService, HotelService hotelService,@Lazy ReservationService reservationService) {
         this.roomRepository = roomRepository;
+        this.roomTypeService = roomTypeService;
+        this.hotelService = hotelService;
+        this.reservationService = reservationService;
     }
 
     @Override
@@ -46,9 +57,18 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public AddRoomResponse add(AddRoomRequest request) {
+        RoomType type = roomTypeService.getById(request.getTypeId());
+        Hotel hotel = hotelService.getById(request.getHotelId());
+        Reservation reservation = reservationService.getById(request.getReservationIds().get(0));
+
         Room room = RoomMapper.INSTANCE.roomToAddRoomRequest(request);
-        Room saved = roomRepository.save(room);
-        AddRoomResponse response = RoomMapper.INSTANCE.addRoomResponseToRoom(saved);
+        room.setType(type);
+        room.setHotel(hotel);
+        room.setReservations(List.of(reservation));
+
+
+        room = roomRepository.save(room);
+        AddRoomResponse response = RoomMapper.INSTANCE.addRoomResponseToRoom(room);
         return response;
     }
 
@@ -69,22 +89,25 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<ListRoomResponse> findAvailableRooms(Date startDate, Date endDate, RoomType roomType) {
-        List<Room> availableRooms = roomRepository.findAvailableRooms(startDate, endDate, roomType);
+    public List<ListRoomResponse> findAvailableRooms(LocalDate startDate, LocalDate endDate, int roomTypeId) {
+        // Belirtilen tarih aralığında ve belirli oda türünde müsait odaları bulmak için gereken sorguyu yapın
+        List<Room> availableRooms = roomRepository.findAvailableRooms(startDate, endDate, roomTypeId);
 
-        List<ListRoomResponse> responseList = new ArrayList<>();
+        // Bulunan odaları ListRoomResponse formatına dönüştürün
+        List<ListRoomResponse> availableRoomResponses = new ArrayList<>();
         for (Room room : availableRooms) {
-            ListRoomResponse response = new ListRoomResponse();
-            response.setId(room.getId());
-            response.setRoomNumber(room.getRoomNumber());
-            //response.setRoomType(room.getType().getRooms()); ListRoomResponse kısmında yok
-            //response.setHotelName(room.getHotel().getName()); ListRoomResponse kısmında yok
-            response.setCapacity(room.getCapacity());
-            response.setPrice(room.getPrice());
-            response.setAvailable(room.getAvailable());
-            responseList.add(response);
+            ListRoomResponse roomResponse = new ListRoomResponse();
+            roomResponse.setId(room.getId());
+            roomResponse.setRoomNumber(room.getRoomNumber());
+            roomResponse.setCapacity(room.getCapacity());
+            roomResponse.setPrice(room.getPrice());
+            roomResponse.setAvailable(room.getAvailable());
+            // Diğer gerekli bilgileri ekleyin
+            availableRoomResponses.add(roomResponse);
         }
 
-        return responseList;
+        return availableRoomResponses;
     }
+
+
 }

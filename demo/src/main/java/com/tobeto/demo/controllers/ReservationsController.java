@@ -2,7 +2,10 @@ package com.tobeto.demo.controllers;
 
 import com.tobeto.demo.entities.Guest;
 import com.tobeto.demo.entities.Reservation;
+import com.tobeto.demo.entities.Room;
+import com.tobeto.demo.services.abstracts.GuestService;
 import com.tobeto.demo.services.abstracts.ReservationService;
+import com.tobeto.demo.services.abstracts.RoomService;
 import com.tobeto.demo.services.dtos.requests.reservation.AddReservationRequest;
 import com.tobeto.demo.services.dtos.requests.reservation.UpdateReservationRequest;
 import com.tobeto.demo.services.dtos.responses.reservation.AddReservationResponse;
@@ -10,8 +13,11 @@ import com.tobeto.demo.services.dtos.responses.reservation.DeleteReservationResp
 import com.tobeto.demo.services.dtos.responses.reservation.ListReservationResponse;
 import com.tobeto.demo.services.dtos.responses.reservation.UpdateReservationResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,6 +26,10 @@ import java.util.List;
 public class ReservationsController {
 
     private ReservationService reservationService;
+
+    private RoomService roomService;
+
+    private GuestService guestService;
 
     @GetMapping("/getAll")
     public List<ListReservationResponse> getAll()
@@ -47,4 +57,6 @@ public class ReservationsController {
     public DeleteReservationResponse delete(@PathVariable("id") int id) {
        return reservationService.delete(id);
     }
+
+
 }

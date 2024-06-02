@@ -24,9 +24,11 @@ public class AddRoomRequest {
 
     private String roomNumber;
 
-    private RoomType type;
+    private int typeId;
 
-    private Hotel hotel;
+    private int hotelId;
+
+    private List<Integer> reservationIds;
 
     private int capacity;
 
